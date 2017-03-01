@@ -1,5 +1,6 @@
 val commonSettings = Seq(
-  scalaVersion := "2.12.1"
+  scalaVersion := "2.12.1",
+  resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 )
 
 lazy val root = (project in file("."))
@@ -12,7 +13,8 @@ lazy val root = (project in file("."))
 lazy val exercises = (project in file("exercises"))
   .settings(commonSettings)
   .settings(
-    name := "exercises"
+    name := "exercises",
+    libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.0" % "test"
   )
 
 lazy val answers = (project in file("answers"))
