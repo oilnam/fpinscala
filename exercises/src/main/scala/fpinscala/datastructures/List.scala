@@ -56,7 +56,10 @@ object List { // `List` companion object. Contains functions for creating and wo
     case Cons(x, xs) => xs
   }
 
-  def setHead[A](l: List[A], h: A): List[A] = sys.error("todo")
+  def setHead[A](l: List[A], h: A): List[A] = l match {
+    case Nil => Nil
+    case Cons(x, xs) => Cons(h, xs)
+  }
 
   def drop[A](l: List[A], n: Int): List[A] = {
     if (n == 0) l
@@ -71,7 +74,11 @@ object List { // `List` companion object. Contains functions for creating and wo
     case Cons(h, t) => if (f(h)) dropWhile(t, f) else l
   }
 
-  def init[A](l: List[A]): List[A] = sys.error("todo")
+  def init[A](l: List[A]): List[A] = l match {
+    case Nil => Nil
+    case Cons(_, Nil) => Nil
+    case Cons(x, xs) => Cons(x, init(xs))
+  }
 
   def length[A](l: List[A]): Int = {
     foldRight(l, 0)((_, acc) => acc + 1)

@@ -19,6 +19,11 @@ class ListTest extends FlatSpec with Matchers {
     List.length(l4) should be(4)
 
     List.map(l2)(identity) should be(l2)
+
+    List.setHead(l4, 9) should be(Cons(9, Cons(2, Cons(3, Cons(4, Nil)))))
+
+    List.init(l4) should be(Cons(1, Cons(2, Cons(3, Nil))))
+
   }
 
 }
