@@ -1,7 +1,7 @@
 package fpinscala.state
 
-import fpinscala.state.RNG.Simple
-import org.scalatest.{Matchers, FlatSpec}
+import fpinscala.state.RNG.{Rand, Simple}
+import org.scalatest.{FlatSpec, Matchers}
 
 class StateTest extends FlatSpec with Matchers {
 
@@ -34,6 +34,18 @@ class StateTest extends FlatSpec with Matchers {
     List(i1, i2, i3) should be(RNG.ints2(3)(rng)._1)
   }
 
+  it should "show how to use the map function" in {
+    val rng = Simple(42)
+
+    val howToUseIt: (Int, RNG) = RNG.nonNegativeInt(rng)
+
+    val partiallyApplied: RNG => (Int, RNG) = RNG.nonNegativeInt _
+
+    def halfRandom: Rand[Int] = {
+      RNG.map(RNG.nonNegativeInt)(i => i / 2)
+
+    }
+  }
 
 
 }

@@ -80,7 +80,19 @@ object RNG {
     }
   }
 
-  def map2[A,B,C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] = ???
+  def betterDouble(rng: RNG): (Double, RNG) = {
+    val f: Rand[Double] = RNG.map(RNG.nonNegativeInt)(_.toDouble)
+    f(rng)
+  }
+
+  def map2[A,B,C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] = {
+    // Rand[A]: RNG => (A, RNG)
+    rng =>
+      val (a, state1) = ra(rng)
+      val (b, state2) = rb(state1)
+      val c = f(a, b)
+      (c, state2)
+  }
 
   def sequence[A](fs: List[Rand[A]]): Rand[List[A]] = ???
 
