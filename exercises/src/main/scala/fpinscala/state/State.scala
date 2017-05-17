@@ -80,6 +80,13 @@ object RNG {
     }
   }
 
+  // here I have to get the new state and pass it along explicitly
+  def oldDouble(rng: RNG): (Double, RNG) = {
+    val (i, s) = nonNegativeInt(rng)
+    (i.toDouble, s)
+  }
+
+  // whereas map returns a function that handles the state
   def betterDouble(rng: RNG): (Double, RNG) = {
     val f: Rand[Double] = RNG.map(RNG.nonNegativeInt)(_.toDouble)
     f(rng)

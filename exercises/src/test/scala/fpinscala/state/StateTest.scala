@@ -37,14 +37,17 @@ class StateTest extends FlatSpec with Matchers {
   it should "show how to use the map function" in {
     val rng = Simple(42)
 
-    val howToUseIt: (Int, RNG) = RNG.nonNegativeInt(rng)
+    val normalUsage: (Int, RNG) = RNG.nonNegativeInt(rng)
 
-    val partiallyApplied: RNG => (Int, RNG) = RNG.nonNegativeInt _
+    // partially applying nonNegativeInt so that it gives me a state action
+    val stateAction: RNG => (Int, RNG) = RNG.nonNegativeInt
 
-    def halfRandom: Rand[Int] = {
-      RNG.map(RNG.nonNegativeInt)(i => i / 2)
-
+    // so given a state action and a function, I can use my custom-defined map to combine them
+    def halfRandom(rng: RNG): (Int, RNG) = {
+      val f = RNG.map(RNG.nonNegativeInt)(i => i / 2) // f being RNG => (A, RNG)
+      f(rng)
     }
+
   }
 
 
