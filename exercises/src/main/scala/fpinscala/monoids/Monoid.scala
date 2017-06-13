@@ -21,17 +21,46 @@ object Monoid {
     val zero = Nil
   }
 
-  val intAddition: Monoid[Int] = ???
+  val intAddition: Monoid[Int] = new Monoid[Int] {
+    def op(a1: Int, a2: Int) = a1 + a2
+    val zero = 0
+  }
 
-  val intMultiplication: Monoid[Int] = ???
+  val intMultiplication: Monoid[Int] = new Monoid[Int] {
+    def op(a: Int, b: Int) = a * b
+    val zero = 1
+  }
 
-  val booleanOr: Monoid[Boolean] = ???
+  val booleanOr: Monoid[Boolean] = new Monoid[Boolean] {
+    def op(a: Boolean, b: Boolean) = a || b
+    val zero = false
+  }
 
-  val booleanAnd: Monoid[Boolean] = ???
+  val booleanAnd: Monoid[Boolean] = new Monoid[Boolean] {
+    def op(x: Boolean, y: Boolean) = x && y
+    val zero = true
+  }
 
-  def optionMonoid[A]: Monoid[Option[A]] = ???
+  // Relevant comment from the solutions:
+  //
+  // Notice that we have a choice in how we implement `op`.
+  // We can compose the options in either order. Both of those implementations
+  // satisfy the monoid laws, but they are not equivalent.
+  // This is true in general--that is, every monoid has a _dual_ where the
+  // `op` combines things in the opposite order. Monoids like `booleanOr` and
+  // `intAddition` are equivalent to their duals because their `op` is commutative
+  // as well as associative.
 
-  def endoMonoid[A]: Monoid[A => A] = ???
+  def optionMonoid[A]: Monoid[Option[A]] = new Monoid[Option[A]] {
+    // dual version being y orElse x
+    def op(x: Option[A], y: Option[A]): Option[A] = x orElse y
+    def zero = None
+  }
+
+  def endoMonoid[A]: Monoid[A => A] = new Monoid[A => A] {
+    def op(f: A => A, g: A => A) = f andThen g // dual: f compose g
+    def zero = (a: A) => a
+  }
 
   // TODO: Placeholder for `Prop`. Remove once you have implemented the `Prop`
   // data type from Part 2.
@@ -46,11 +75,21 @@ object Monoid {
 
   def trimMonoid(s: String): Monoid[String] = ???
 
-  def concatenate[A](as: List[A], m: Monoid[A]): A =
-    ???
+  def concatenate[A](as: List[A], m: Monoid[A]): A = {
+    as.foldLeft(m.zero)(m.op)
+    // or to spell this out:
+    as.foldLeft(m.zero)((acc, a) => m.op(acc, a))
+  }
 
-  def foldMap[A, B](as: List[A], m: Monoid[B])(f: A => B): B =
-    ???
+  // converting the whole list to Bs first
+  def foldMap[A, B](as: List[A], m: Monoid[B])(f: A => B): B = {
+    as.map(f).foldLeft(m.zero)(m.op)
+  }
+
+  // or without even using map:
+  def foldMap2[A, B](as: List[A], m: Monoid[B])(f: A => B): B = {
+    as.foldLeft(m.zero)((acc, a) => m.op(acc, f(a))) // acc: B
+  }
 
   def foldRight[A, B](as: List[A])(z: B)(f: (A, B) => B): B =
     ???
